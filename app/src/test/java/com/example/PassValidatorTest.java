@@ -27,7 +27,7 @@ public class PassValidatorTest {
     public void shouldNotValidate() throws Exception{
         passValidator = new PassValidator("texto 1");
         boolean result = passValidator.validate();
-
+//todo this fail
         assertFalse(result);
     }
 
