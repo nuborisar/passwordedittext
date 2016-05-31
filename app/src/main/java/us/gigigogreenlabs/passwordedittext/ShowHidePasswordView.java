@@ -2,18 +2,23 @@ package us.gigigogreenlabs.passwordedittext;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.text.method.PasswordTransformationMethod;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
+import android.widget.Toast;
+
+import com.example.PassValidator;
 
 
 /**
  * Created by josemoralejo on 19/5/15.
  */
-public class ShowHidePasswordView  extends EditText{
+public class ShowHidePasswordView extends EditText {
 
     private static final int SHOW_TYPE_ON_CLICK = 0;
     private static final int SHOW_TYPE_LONG_PRESS = 1;
@@ -22,6 +27,35 @@ public class ShowHidePasswordView  extends EditText{
 
     private boolean clicable;
     private boolean visible;
+/*PassValidator Test*/
+
+    private PassValidator passValidator;
+
+    private TextWatcher textWatcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+            passValidator = new PassValidator(s.toString());
+            if (passValidator.validate())
+                Toast.makeText(getContext(), "VALID", Toast.LENGTH_LONG).show();
+            else
+                Toast.makeText(getContext(), "IN-VALID", Toast.LENGTH_LONG).show();
+
+        }
+    };
+
+
+
+    /**/
 
     public ShowHidePasswordView(Context context) {
         this(context, null);
@@ -44,30 +78,32 @@ public class ShowHidePasswordView  extends EditText{
         performHidePassword();
     }
 
-    private void initView(){
+    private void initView() {
         this.setInputType(EditorInfo.TYPE_TEXT_FLAG_NO_SUGGESTIONS);//No suggestions.
 
     }
 
-    public void setImageResourceForLock(int resIdUnlocked, int resIdLocked){
+    public void setImageResourceForLock(int resIdUnlocked, int resIdLocked) {
         imgNotSecure = resIdUnlocked;
         imgSecure = resIdLocked;
         performHidePassword();
     }
 
     private void loadAttributes(AttributeSet attrs) {
-        if( attrs!= null) {
+        if (attrs != null) {
             // Procesamos los atributos XML personalizados
             TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.ShowHidePasswordView);
 
             int showType = a.getInt(R.styleable.ShowHidePasswordView_show_type, SHOW_TYPE_LONG_PRESS);
-            clicable = ( showType == SHOW_TYPE_ON_CLICK)? true: false;
+            clicable = (showType == SHOW_TYPE_ON_CLICK) ? true : false;
             a.recycle();
         }
     }
 
     private void setListeners() {
         this.setOnTouchListener(onTouchListener);
+        /*passvalidator*/
+        this.addTextChangedListener(textWatcher);
     }
 
     OnTouchListener onTouchListener = new OnTouchListener() {
@@ -78,8 +114,8 @@ public class ShowHidePasswordView  extends EditText{
             final int DRAWABLE_RIGHT = 2;
             final int DRAWABLE_BOTTOM = 3;
 
-            if(clicable){
-                if (event.getAction() == MotionEvent.ACTION_UP){
+            if (clicable) {
+                if (event.getAction() == MotionEvent.ACTION_UP) {
                     if (event.getRawX() >= (ShowHidePasswordView.this.getRight() - ShowHidePasswordView.this.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
 
                         if (visible) {
