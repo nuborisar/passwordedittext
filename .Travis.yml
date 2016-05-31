@@ -21,8 +21,5 @@ before_install:
   - pip install --user codecov
 
 script:
- - ./gradlew check
+ - gradlew check
 
-after_success:
- - codecov
- - bash <(curl -s https://codecov.io/bash)
